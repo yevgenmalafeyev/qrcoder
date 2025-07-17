@@ -4,16 +4,18 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { subDays, format, eachDayOfInterval } from "date-fns"
 
-interface AuthenticatedUser {
-  id: string
-  email: string
-  name: string
-  role: string
+interface AuthenticatedSession {
+  user: {
+    id: string
+    email: string
+    name: string
+    role: string
+  }
 }
 
 export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as AuthenticatedSession | null
     
     if (!session?.user || session.user.role !== 'author') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

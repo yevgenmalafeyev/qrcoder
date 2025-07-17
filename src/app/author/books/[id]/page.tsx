@@ -35,12 +35,6 @@ export default function BookDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (params.id) {
-      fetchBook()
-    }
-  }, [params.id, fetchBook])
-
   const fetchBook = useCallback(async () => {
     try {
       const response = await fetch(`/api/author/books/${params.id}`)
@@ -55,6 +49,12 @@ export default function BookDetailPage() {
       setLoading(false)
     }
   }, [params.id])
+
+  useEffect(() => {
+    if (params.id) {
+      fetchBook()
+    }
+  }, [params.id, fetchBook])
 
   const getQRCodeUrl = (qrCodeId: string) => {
     return `${window.location.origin}/qr/${qrCodeId}`

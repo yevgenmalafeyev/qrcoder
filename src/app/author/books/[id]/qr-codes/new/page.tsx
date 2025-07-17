@@ -54,6 +54,18 @@ export default function NewQRCodePage() {
   const [error, setError] = useState('')
   const [previewUrl, setPreviewUrl] = useState('')
 
+  const fetchBook = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/author/books/${params.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setBook({ id: data.id, title: data.title })
+      }
+    } catch (err) {
+      console.error('Failed to fetch book:', err)
+    }
+  }, [params.id])
+
   useEffect(() => {
     if (params.id) {
       fetchBook()
@@ -67,18 +79,6 @@ export default function NewQRCodePage() {
       setPreviewUrl('')
     }
   }, [formData.name, formData.content])
-
-  const fetchBook = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/author/books/${params.id}`)
-      if (response.ok) {
-        const data = await response.json()
-        setBook({ id: data.id, title: data.title })
-      }
-    } catch (err) {
-      console.error('Failed to fetch book:', err)
-    }
-  }, [params.id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
