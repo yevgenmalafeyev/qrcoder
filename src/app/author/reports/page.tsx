@@ -54,10 +54,6 @@ export default function AuthorReportsPage() {
   const [loading, setLoading] = useState(true)
   const [dateRange, setDateRange] = useState('30d')
 
-  useEffect(() => {
-    fetchReportData()
-  }, [dateRange, fetchReportData])
-
   const fetchReportData = useCallback(async () => {
     try {
       const response = await fetch(`/api/author/reports?range=${dateRange}`)
@@ -69,6 +65,10 @@ export default function AuthorReportsPage() {
       setLoading(false)
     }
   }, [dateRange])
+
+  useEffect(() => {
+    fetchReportData()
+  }, [fetchReportData])
 
   const exportReport = async () => {
     try {

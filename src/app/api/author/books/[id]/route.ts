@@ -1,22 +1,23 @@
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || session.user.role !== 'author') {
+    if (!session?.user || session.user.role !== 'author') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const resolvedParams = await params
     const book = await db.book.findFirst({
       where: { 
-        id: params.id,
+        id: resolvedParams.id,
         authorId: session.user.id
       },
       include: {
@@ -44,12 +45,12 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || session.user.role !== 'author') {
+    if (!session?.user || session.user.role !== 'author') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -59,9 +60,10 @@ export async function PUT(
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })
     }
 
+    const resolvedParams = await params
     const book = await db.book.findFirst({
       where: { 
-        id: params.id,
+        id: resolvedParams.id,
         authorId: session.user.id
       }
     })
@@ -71,7 +73,7 @@ export async function PUT(
     }
 
     const updatedBook = await db.book.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         title,
         isbn,
@@ -88,18 +90,19 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || session.user.role !== 'author') {
+    if (!session?.user || session.user.role !== 'author') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const resolvedParams = await params
     const book = await db.book.findFirst({
       where: { 
-        id: params.id,
+        id: resolvedParams.id,
         authorId: session.user.id
       }
     })
@@ -109,7 +112,7 @@ export async function DELETE(
     }
 
     await db.book.delete({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     return NextResponse.json({ message: 'Book deleted successfully' })

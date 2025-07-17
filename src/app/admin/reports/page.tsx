@@ -58,10 +58,6 @@ export default function AdminReportsPage() {
   const [dateRange, setDateRange] = useState('30d')
   const [authorFilter, setAuthorFilter] = useState('')
 
-  useEffect(() => {
-    fetchReportData()
-  }, [dateRange, authorFilter, fetchReportData])
-
   const fetchReportData = useCallback(async () => {
     try {
       const params = new URLSearchParams({
@@ -77,6 +73,10 @@ export default function AdminReportsPage() {
       setLoading(false)
     }
   }, [dateRange, authorFilter])
+
+  useEffect(() => {
+    fetchReportData()
+  }, [fetchReportData])
 
   const exportReport = async () => {
     try {
@@ -260,7 +260,7 @@ export default function AdminReportsPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"

@@ -1,23 +1,24 @@
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || session.user.role !== 'admin') {
+    if (!session?.user || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { isActive } = await request.json()
 
+    const resolvedParams = await params
     const author = await db.author.findUnique({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     if (!author) {
@@ -25,7 +26,7 @@ export async function PATCH(
     }
 
     const updatedAuthor = await db.author.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: { isActive },
       include: {
         _count: {
