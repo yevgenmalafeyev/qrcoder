@@ -160,7 +160,7 @@ export default function AuthorDashboard() {
                           {scan.qrCode.name}
                         </p>
                         <p className="text-xs text-gray-500">
-                          from "{scan.qrCode.book.title}" • {new Date(scan.scannedAt).toLocaleDateString()}
+                          from &quot;{scan.qrCode.book.title}&quot; • {new Date(scan.scannedAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>

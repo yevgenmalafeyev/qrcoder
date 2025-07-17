@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -173,9 +174,11 @@ export default function QrCodePage() {
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">{qrCode.name}</h2>
               <div className="bg-white rounded-lg p-4 shadow-sm border">
-                <img 
+                <Image 
                   src={qrCode.content} 
                   alt={qrCode.name}
+                  width={800}
+                  height={600}
                   className="w-full h-auto rounded-lg"
                   style={{ maxHeight: '70vh', objectFit: 'contain' }}
                 />
@@ -196,7 +199,7 @@ export default function QrCodePage() {
           <div className="text-center mb-8">
             <LogoWithText className="justify-center mb-4" />
             <div className="text-sm text-gray-600">
-              From "{qrCode.book.title}" by {qrCode.book.author.name}
+              From &quot;{qrCode.book.title}&quot; by {qrCode.book.author.name}
             </div>
           </div>
           

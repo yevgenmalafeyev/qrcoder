@@ -3,8 +3,8 @@
 import { AuthorLayout } from "@/components/author/layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
-import { Calendar, Download, Filter, TrendingUp, Eye, QrCode, BookOpen } from "lucide-react"
+import { useEffect, useState, useCallback } from "react"
+import { Download, Filter, Eye, QrCode, BookOpen, TrendingUp } from "lucide-react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
 
 interface ReportData {
@@ -56,9 +56,9 @@ export default function AuthorReportsPage() {
 
   useEffect(() => {
     fetchReportData()
-  }, [dateRange])
+  }, [dateRange, fetchReportData])
 
-  const fetchReportData = async () => {
+  const fetchReportData = useCallback(async () => {
     try {
       const response = await fetch(`/api/author/reports?range=${dateRange}`)
       const data = await response.json()
@@ -68,7 +68,7 @@ export default function AuthorReportsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [dateRange])
 
   const exportReport = async () => {
     try {
@@ -279,7 +279,7 @@ export default function AuthorReportsPage() {
                           {activity.qrCode}
                         </p>
                         <p className="text-xs text-gray-500">
-                          from "{activity.book}" • {activity.date}
+                          from &quot;{activity.book}&quot; • {activity.date}
                         </p>
                       </div>
                       <div className="flex items-center gap-1">

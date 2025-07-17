@@ -4,7 +4,7 @@ import { AuthorLayout } from "@/components/author/layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, QrCode, Link2, Video, FileText, Image } from "lucide-react"
 import Link from "next/link"
@@ -58,7 +58,7 @@ export default function NewQRCodePage() {
     if (params.id) {
       fetchBook()
     }
-  }, [params.id])
+  }, [params.id, fetchBook])
 
   useEffect(() => {
     if (formData.name && formData.content) {
@@ -68,7 +68,7 @@ export default function NewQRCodePage() {
     }
   }, [formData.name, formData.content])
 
-  const fetchBook = async () => {
+  const fetchBook = useCallback(async () => {
     try {
       const response = await fetch(`/api/author/books/${params.id}`)
       if (response.ok) {
@@ -78,7 +78,7 @@ export default function NewQRCodePage() {
     } catch (err) {
       console.error('Failed to fetch book:', err)
     }
-  }
+  }, [params.id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -102,7 +102,8 @@ export default function NewQRCodePage() {
         throw new Error(data.error || 'Failed to create QR code')
       }
 
-      const qrCode = await response.json()
+      // const qrCode = await response.json() // Not used in current implementation
+      await response.json()
       router.push(`/author/books/${params.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create QR code')
@@ -134,7 +135,7 @@ export default function NewQRCodePage() {
             <h1 className="text-3xl font-bold text-gray-900">Create QR Code</h1>
             {book && (
               <p className="text-gray-600 mt-2">
-                Adding QR code to "{book.title}"
+                Adding QR code to &quot;{book.title}&quot;
               </p>
             )}
           </div>

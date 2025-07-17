@@ -4,8 +4,8 @@ import { AdminLayout } from "@/components/admin/layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useEffect, useState } from "react"
-import { Calendar, Download, Filter, TrendingUp, Eye, QrCode, BookOpen, Users } from "lucide-react"
+import { useEffect, useState, useCallback } from "react"
+import { Download, Filter, Eye, QrCode, BookOpen, Users } from "lucide-react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
 
 interface AdminReportData {
@@ -60,9 +60,9 @@ export default function AdminReportsPage() {
 
   useEffect(() => {
     fetchReportData()
-  }, [dateRange, authorFilter])
+  }, [dateRange, authorFilter, fetchReportData])
 
-  const fetchReportData = async () => {
+  const fetchReportData = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         range: dateRange,
@@ -76,7 +76,7 @@ export default function AdminReportsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [dateRange, authorFilter])
 
   const exportReport = async () => {
     try {

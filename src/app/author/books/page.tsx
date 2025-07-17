@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+// import { useSession } from "next-auth/react" // Not used in current implementation
 import { BookOpen, Plus, Search, QrCode, Eye, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 
@@ -27,7 +27,7 @@ interface Book {
 }
 
 export default function AuthorBooksPage() {
-  const { data: session } = useSession()
+  // const { data: session } = useSession() // Not used in current implementation
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")

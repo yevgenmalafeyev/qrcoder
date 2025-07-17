@@ -34,7 +34,7 @@ export default function LoginPage() {
       } else {
         router.push(userType === "admin" ? "/admin" : "/author")
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setLoading(false)

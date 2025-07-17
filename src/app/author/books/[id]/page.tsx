@@ -4,8 +4,8 @@ import { AuthorLayout } from "@/components/author/layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState, useCallback } from "react"
+import { useParams } from "next/navigation"
 import { ArrowLeft, BookOpen, QrCode, Eye, Plus, Download, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import QRCodeComponent from "react-qr-code"
@@ -30,7 +30,7 @@ interface Book {
 
 export default function BookDetailPage() {
   const params = useParams()
-  const router = useRouter()
+  // const router = useRouter() // Not used in current implementation
   const [book, setBook] = useState<Book | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -39,9 +39,9 @@ export default function BookDetailPage() {
     if (params.id) {
       fetchBook()
     }
-  }, [params.id])
+  }, [params.id, fetchBook])
 
-  const fetchBook = async () => {
+  const fetchBook = useCallback(async () => {
     try {
       const response = await fetch(`/api/author/books/${params.id}`)
       if (!response.ok) {
@@ -54,7 +54,7 @@ export default function BookDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id])
 
   const getQRCodeUrl = (qrCodeId: string) => {
     return `${window.location.origin}/qr/${qrCodeId}`

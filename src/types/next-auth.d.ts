@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+// import NextAuth from "next-auth" // Not used in current implementation
 
 declare module "next-auth" {
   interface User {

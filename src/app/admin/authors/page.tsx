@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 import { Users, Plus, Search, MoreHorizontal, Key, UserCheck, UserX, Eye, BookOpen, QrCode } from "lucide-react"
-import { hashPassword } from "@/lib/auth"
+// import { hashPassword } from "@/lib/auth" // Not used in current implementation
 
 interface Author {
   id: string
