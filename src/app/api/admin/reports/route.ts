@@ -4,6 +4,13 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { subDays, format, eachDayOfInterval } from "date-fns"
 
+interface AuthenticatedUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions)

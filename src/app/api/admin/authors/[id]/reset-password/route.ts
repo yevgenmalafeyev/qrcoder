@@ -3,6 +3,13 @@ import { getServerSession } from "next-auth/next"
 import { authOptions, hashPassword } from "@/lib/auth"
 import { db } from "@/lib/db"
 
+interface AuthenticatedUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
+
 function generateRandomPassword(length = 8): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let password = ''

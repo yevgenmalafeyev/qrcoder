@@ -3,6 +3,13 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 
+interface AuthenticatedUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

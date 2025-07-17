@@ -2,7 +2,13 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
-import type { Session } from "next-auth"
+
+interface AuthenticatedUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
 // import { signIn } from "next-auth/react" // Not used in current implementation
 
 export async function POST(
@@ -10,9 +16,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions) as Session | null
+    const session = await getServerSession(authOptions)
     
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    if (!session?.user || (session.user as AuthenticatedUser).role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
