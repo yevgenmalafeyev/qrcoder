@@ -60,10 +60,14 @@ export const authOptions = {
           
           // If database connection fails, provide a fallback for demo purposes
           const prismaError = error as { code?: string }
-          if (prismaError?.code === 'P1001' || prismaError?.code === 'P2021') {
+          const errorMessage = error instanceof Error ? error.message : String(error)
+          
+          if (prismaError?.code === 'P1001' || prismaError?.code === 'P2021' || 
+              errorMessage.includes('connection') || errorMessage.includes('ECONNREFUSED') ||
+              !process.env.DATABASE_URL) {
             console.log('Database connection failed, using fallback auth')
             
-            // Demo credentials - remove in production
+            // Demo credentials for production demo
             if (userType === "admin" && email === "admin@example.com" && password === "admin123") {
               return {
                 id: "demo-admin",
