@@ -59,7 +59,8 @@ export const authOptions = {
           console.error("Auth error:", error)
           
           // If database connection fails, provide a fallback for demo purposes
-          if (error.code === 'P1001' || error.code === 'P2021') {
+          const prismaError = error as { code?: string }
+          if (prismaError?.code === 'P1001' || prismaError?.code === 'P2021') {
             console.log('Database connection failed, using fallback auth')
             
             // Demo credentials - remove in production
