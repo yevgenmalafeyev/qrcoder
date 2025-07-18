@@ -33,21 +33,32 @@ export default function AuthorDashboard() {
     recentScans: []
   })
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
   
   useEffect(() => {
+    setMounted(true)
     fetchAuthorStats()
   }, [])
   
-  // Prevent rendering during build time when there's no session context
-  if (typeof window === 'undefined') {
+  // Prevent hydration mismatch
+  if (!mounted) {
     return <AuthorLayout><div>Loading...</div></AuthorLayout>
   }
 
   const fetchAuthorStats = async () => {
     try {
       const response = await fetch('/api/author/dashboard')
-      const data = await response.json()
-      setStats(data)
+      if (response.ok) {
+        const data = await response.json()
+        setStats({
+          totalBooks: data.totalBooks || 0,
+          totalQrCodes: data.totalQrCodes || 0,
+          totalScans: data.totalScans || 0,
+          recentScans: data.recentScans || []
+        })
+      } else {
+        console.error('Failed to fetch author stats:', response.status)
+      }
     } catch (error) {
       console.error('Failed to fetch author stats:', error)
     } finally {

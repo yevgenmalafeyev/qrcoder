@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ReactNode } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { Users, BarChart3, Settings, LogOut, Home } from "lucide-react"
 
 interface AdminLayoutProps {
@@ -15,9 +15,14 @@ interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
   
-  // Prevent rendering during build time when there's no session context
-  if (typeof window === 'undefined') {
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Prevent hydration mismatch
+  if (!mounted) {
     return <div>{children}</div>
   }
 
