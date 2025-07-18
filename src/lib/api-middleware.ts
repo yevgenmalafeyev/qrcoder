@@ -16,28 +16,20 @@ export interface ApiError {
   details?: unknown
 }
 
-export async function withAuth(
-  handler: (request: Request, session: AuthenticatedSession) => Promise<NextResponse>,
-  allowedRoles?: string[]
-) {
-  return async (request: Request) => {
-    try {
-      const session = await getServerSession(authOptions) as AuthenticatedSession | null
-      
-      if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      }
+export async function getAuthenticatedSession(): Promise<AuthenticatedSession | null> {
+  return await getServerSession(authOptions) as AuthenticatedSession | null
+}
 
-      if (allowedRoles && !allowedRoles.includes(session.user.role)) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-      }
-
-      return await handler(request, session)
-    } catch (error) {
-      console.error('API middleware error:', error)
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-    }
+export function checkAuth(session: AuthenticatedSession | null, allowedRoles: string[] = []): NextResponse | null {
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(session.user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  return null
 }
 
 export function createApiError(message: string, status: number = 400): NextResponse {
