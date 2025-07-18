@@ -10,6 +10,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:functional": "jest --config jest.config.functional.js",
+    "test:functional:local": "TEST_BASE_URL=http://localhost:3000 jest --config jest.config.functional.js",
+    "test:functional:prod": "TEST_BASE_URL=https://qrcoder.blaster.app jest --config jest.config.functional.js",
+    "test:functional:headless": "TEST_HEADLESS=true jest --config jest.config.functional.js",
+    "test:functional:headed": "TEST_HEADLESS=false jest --config jest.config.functional.js",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
@@ -58,7 +63,10 @@
     "eslint-config-next": "15.4.1",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
+    "jest-html-reporters": "^3.1.7",
+    "playwright": "^1.51.0",
     "tailwindcss": "^4",
+    "ts-jest": "^29.2.5",
     "tsx": "^4.20.3",
     "typescript": "^5"
   }

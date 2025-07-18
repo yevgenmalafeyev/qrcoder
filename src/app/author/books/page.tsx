@@ -6,29 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
-// import { useSession } from "next-auth/react" // Not used in current implementation
 import { BookOpen, Plus, Search, QrCode, Eye, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
-
-interface Book {
-  id: string
-  title: string
-  isbn?: string
-  description?: string
-  createdAt: string
-  _count: {
-    qrCodes: number
-  }
-  qrCodes: Array<{
-    _count: {
-      scans: number
-    }
-  }>
-}
+import { BookWithStats } from "@/types/api"
 
 export default function AuthorBooksPage() {
-  // const { data: session } = useSession() // Not used in current implementation
-  const [books, setBooks] = useState<Book[]>([])
+  const [books, setBooks] = useState<BookWithStats[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
 

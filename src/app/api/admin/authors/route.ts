@@ -1,97 +1,32 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
-import { authOptions, hashPassword } from "@/lib/auth"
-import { db } from "@/lib/db"
+import { withAuth, createApiError, createApiSuccess, handleApiError } from "@/lib/api-middleware"
+import { AuthorService } from "@/lib/services/author-service"
+import { CreateAuthorRequest } from "@/types/api"
 
-interface AuthenticatedSession {
-  user: {
-    id: string
-    email: string
-    name: string
-    role: string
-  }
-}
-
-export async function GET() {
+export const GET = withAuth(async () => {
   try {
-    const session = await getServerSession(authOptions) as AuthenticatedSession | null
-    
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const authors = await db.author.findMany({
-      include: {
-        _count: {
-          select: { books: true }
-        },
-        books: {
-          include: {
-            _count: {
-              select: { qrCodes: true }
-            },
-            qrCodes: {
-              include: {
-                _count: {
-                  select: { scans: true }
-                }
-              }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    })
-
-    return NextResponse.json(authors)
+    const authors = await AuthorService.getAllAuthors()
+    return createApiSuccess(authors)
   } catch (error) {
-    console.error('Get authors API error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return handleApiError(error, 'Admin authors GET')
   }
-}
+}, ['admin'])
 
-export async function POST(request: Request) {
+export const POST = withAuth(async (request) => {
   try {
-    const session = await getServerSession(authOptions) as AuthenticatedSession | null
+    const body = await request.json() as CreateAuthorRequest
     
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!body.name || !body.email || !body.password) {
+      return createApiError('All fields are required', 400)
     }
 
-    const { name, email, password } = await request.json()
-
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
+    const emailExists = await AuthorService.checkEmailExists(body.email)
+    if (emailExists) {
+      return createApiError('Author with this email already exists', 409)
     }
 
-    // Check if author already exists
-    const existingAuthor = await db.author.findUnique({
-      where: { email }
-    })
-
-    if (existingAuthor) {
-      return NextResponse.json({ error: 'Author with this email already exists' }, { status: 409 })
-    }
-
-    const hashedPassword = await hashPassword(password)
-
-    const author = await db.author.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        isActive: true
-      },
-      include: {
-        _count: {
-          select: { books: true }
-        }
-      }
-    })
-
-    return NextResponse.json(author)
+    const author = await AuthorService.createAuthor(body)
+    return createApiSuccess(author, 201)
   } catch (error) {
-    console.error('Create author API error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return handleApiError(error, 'Create author')
   }
-}
+}, ['admin'])

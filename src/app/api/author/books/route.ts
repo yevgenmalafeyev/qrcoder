@@ -1,80 +1,31 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
-import { db } from "@/lib/db"
+import { withAuth, createApiError, createApiSuccess, handleApiError } from "@/lib/api-middleware"
+import { BookService } from "@/lib/services/book-service"
+import { CreateBookRequest } from "@/types/api"
 
-interface AuthenticatedSession {
-  user: {
-    id: string
-    email: string
-    name: string
-    role: string
-  }
-}
-
-export async function GET() {
+export const GET = withAuth(async (request, session) => {
   try {
-    const session = await getServerSession(authOptions) as AuthenticatedSession | null
+    const books = await BookService.getBooksByAuthor(session.user.id)
+    return createApiSuccess(books)
+  } catch (error) {
+    return handleApiError(error, 'Author books GET')
+  }
+}, ['author'])
+
+export const POST = withAuth(async (request, session) => {
+  try {
+    const body = await request.json() as CreateBookRequest
     
-    if (!session?.user || session.user.role !== 'author') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!body.title) {
+      return createApiError('Title is required', 400)
     }
 
-    const books = await db.book.findMany({
-      where: { authorId: session.user.id },
-      include: {
-        _count: {
-          select: { qrCodes: true }
-        },
-        qrCodes: {
-          include: {
-            _count: {
-              select: { scans: true }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
+    const book = await BookService.createBook({
+      ...body,
+      authorId: session.user.id
     })
 
-    return NextResponse.json(books)
+    return createApiSuccess(book, 201)
   } catch (error) {
-    console.error('Author books API error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return handleApiError(error, 'Create book')
   }
-}
-
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession(authOptions) as AuthenticatedSession | null
-    
-    if (!session?.user || session.user.role !== 'author') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { title, isbn, description } = await request.json()
-
-    if (!title) {
-      return NextResponse.json({ error: 'Title is required' }, { status: 400 })
-    }
-
-    const book = await db.book.create({
-      data: {
-        title,
-        isbn,
-        description,
-        authorId: session.user.id
-      },
-      include: {
-        _count: {
-          select: { qrCodes: true }
-        }
-      }
-    })
-
-    return NextResponse.json(book)
-  } catch (error) {
-    console.error('Create book API error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}
+}, ['author'])
