@@ -100,11 +100,16 @@ export const authOptions = {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: { session: any; token: any }) {
-      if (token) {
-        session.user.id = token.sub!
-        session.user.role = token.role as string
+      try {
+        if (token) {
+          session.user.id = token.sub!
+          session.user.role = token.role as string
+        }
+        return session
+      } catch (error) {
+        console.error('Session callback error:', error)
+        return session
       }
-      return session
     }
   },
   pages: {
@@ -114,7 +119,21 @@ export const authOptions = {
   session: {
     strategy: "jwt" as const
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
+  logger: {
+    error: (code: string, metadata?: unknown) => {
+      console.error('NextAuth Error:', code, metadata)
+    },
+    warn: (code: string) => {
+      console.warn('NextAuth Warning:', code)
+    },
+    debug: (code: string, metadata?: unknown) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('NextAuth Debug:', code, metadata)
+      }
+    }
+  }
 }
 
 export async function hashPassword(password: string): Promise<string> {

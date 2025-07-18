@@ -124,6 +124,7 @@ export default function AuthorSettingsPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="mt-1"
+                    autoComplete="name"
                   />
                 </div>
                 <div>
@@ -134,6 +135,7 @@ export default function AuthorSettingsPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="mt-1"
+                    autoComplete="email"
                   />
                 </div>
                 <Button type="submit" disabled={isLoading}>
@@ -165,6 +167,7 @@ export default function AuthorSettingsPage() {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="mt-1"
+                    autoComplete="current-password"
                   />
                 </div>
                 <div>
@@ -175,6 +178,7 @@ export default function AuthorSettingsPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="mt-1"
+                    autoComplete="new-password"
                   />
                 </div>
                 <div>
@@ -185,6 +189,7 @@ export default function AuthorSettingsPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="mt-1"
+                    autoComplete="new-password"
                   />
                 </div>
                 <Button type="submit" disabled={isLoading}>
