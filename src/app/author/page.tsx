@@ -33,10 +33,15 @@ export default function AuthorDashboard() {
     recentScans: []
   })
   const [loading, setLoading] = useState(true)
-
+  
   useEffect(() => {
     fetchAuthorStats()
   }, [])
+  
+  // Prevent rendering during build time when there's no session context
+  if (typeof window === 'undefined') {
+    return <AuthorLayout><div>Loading...</div></AuthorLayout>
+  }
 
   const fetchAuthorStats = async () => {
     try {
@@ -211,3 +216,5 @@ export default function AuthorDashboard() {
     </AuthorLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'

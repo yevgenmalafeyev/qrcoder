@@ -349,3 +349,5 @@ export default function AdminAuthorsPage() {
     </AdminLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'

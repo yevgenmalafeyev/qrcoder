@@ -15,6 +15,11 @@ interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { data: session } = useSession()
   const pathname = usePathname()
+  
+  // Prevent rendering during build time when there's no session context
+  if (typeof window === 'undefined') {
+    return <div>{children}</div>
+  }
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Home },

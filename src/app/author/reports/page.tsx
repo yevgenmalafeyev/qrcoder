@@ -302,3 +302,5 @@ export default function AuthorReportsPage() {
     </AuthorLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'

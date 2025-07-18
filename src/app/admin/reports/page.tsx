@@ -315,3 +315,5 @@ export default function AdminReportsPage() {
     </AdminLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'

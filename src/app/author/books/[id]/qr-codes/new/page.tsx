@@ -284,3 +284,5 @@ export default function NewQRCodePage() {
     </AuthorLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'

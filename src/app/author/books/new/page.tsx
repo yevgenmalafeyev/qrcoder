@@ -147,3 +147,5 @@ export default function NewBookPage() {
     </AuthorLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'

@@ -287,3 +287,5 @@ export default function BookDetailPage() {
     </AuthorLayout>
   )
 }
+
+export const dynamic = 'force-dynamic'
